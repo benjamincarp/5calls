@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Issue, Category, CategoryMap } from '../../common/models';
 import { IssuesListItem } from './index';
 import { RemoteDataState } from '../../redux/remoteData';
+import { userStatsContext, remoteStateContext } from '../../contexts';
 
 interface Props {
   readonly remoteState: RemoteDataState;
@@ -106,24 +107,47 @@ export class MoreIssues extends React.Component<Props, State> {
           <h1 className="call__title">
             {this.state.totalCount + ' Active Issues'}
           </h1>
-          {this.state.issueCategoryMap ? (
-            this.state.issueCategoryMap.map((cat, key) => (
-              <div key={key}>
-                <h2>{cat.category.name}</h2>
-                <ul className="issues-list" role="navigation">
-                  {cat.issues.map(issue => (
-                    <IssuesListItem
-                      key={issue.id}
-                      issue={issue}
-                      isIssueComplete={this.isIssueComplete(issue)}
-                      isIssueActive={false}
-                    />
-                  ))}
-                </ul>
-              </div>
-            ))
-          ) : (
-            <span />
+          <userStatsContext.Consumer>
+            {userStatsState => (
+              <remoteStateContext.Consumer>
+                {remoteState => (
+                  <>
+                    {this.state.issueCategoryMap ? (
+                      this.state.issueCategoryMap.map((cat, key) => (
+                        <div key={key}>
+                          <h2>{cat.category.name}</h2>
+                          <ul className="issues-list" role="navigation">
+                            {cat.issues.map(issue => (
+                              <IssuesListItem
+                                key={issue.id}
+                                issue={issue}
+                                isIssueActive={false}
+                                isIssueComplete={
+                                  issue.numberOfCompletedContacts(
+                                    remoteState.contacts,
+                                    userStatsState.all
+                                  ) > 0
+                                }
+                                contactsCount={issue.numberOfContacts(
+                                  remoteState.contacts
+                                )}
+                                completeCount={issue.numberOfCompletedContacts(
+                                  remoteState.contacts,
+                                  userStatsState.all
+                                )}
+                              />
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    ) : (
+                      <span />
+                    )}
+                  </>
+                )}
+              </remoteStateContext.Consumer>
+            )}
+          </userStatsContext.Consumer>
           )}
         </div>
       </section>

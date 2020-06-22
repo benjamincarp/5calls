@@ -2,8 +2,11 @@ import * as React from 'react';
 import i18n from '../../services/i18n';
 import { Link } from 'react-router-dom';
 
-import { Issue } from '../../common/models';
+import { Issue, ContactList } from '../../common/models';
 import { IssuesListItem } from './index';
+
+import { userStatsContext, remoteStateContext } from '../../contexts';
+import { UserStatsState } from '../../redux/userStats';
 
 interface Props {
   issues: Issue[];
@@ -27,7 +30,7 @@ export class IssuesList extends React.Component<Props> {
     );
   };
 
-  listItems = () => {
+  listItems = (userStatsState: UserStatsState, contacts: ContactList) => {
     let currentIssueId = this.props.currentIssue
       ? this.props.currentIssue.id
       : 0;
@@ -38,11 +41,13 @@ export class IssuesList extends React.Component<Props> {
           key={issue.id}
           issue={issue}
           isIssueComplete={
-            this.props.completedIssueIds &&
-            this.props.completedIssueIds.find(
-              (issueId: string) => issue.slug === issueId
-            ) !== undefined
+            issue.numberOfCompletedContacts(contacts, userStatsState.all) > 0
           }
+          contactsCount={issue.numberOfContacts(contacts)}
+          completeCount={issue.numberOfCompletedContacts(
+            contacts,
+            userStatsState.all
+          )}
           isIssueActive={currentIssueId === issue.id}
         />
       ));
@@ -55,10 +60,18 @@ export class IssuesList extends React.Component<Props> {
 
   render() {
     return (
-      <ul className="issues-list" role="navigation">
-        {this.listItems()}
-        {this.listFooter()}
-      </ul>
+      <userStatsContext.Consumer>
+        {userStatsState => (
+          <remoteStateContext.Consumer>
+            {remoteState => (
+              <ul className="issues-list" role="navigation">
+                {this.listItems(userStatsState, remoteState.contacts)}
+                {this.listFooter()}
+              </ul>
+            )}
+          </remoteStateContext.Consumer>
+        )}
+      </userStatsContext.Consumer>
     );
   }
 }

@@ -7,15 +7,19 @@ interface Props {
   readonly issue: Issue;
   readonly isIssueComplete: boolean;
   readonly isIssueActive: boolean;
+  readonly contactsCount: number;
+  readonly completeCount: number;
 }
 
 interface State {}
 
 export class IssuesListItem extends React.Component<Props, State> {
   render() {
-    const isCompleted = this.props.isIssueComplete ? 'is-complete' : '';
-    const isActive = this.props.isIssueActive ? 'is-active' : '';
-    const issueLink = `/issue/${this.props.issue.slugOrID()}`;
+    const { completeCount, contactsCount, isIssueActive, issue } = this.props;
+    const isCompleted =
+      completeCount > 0 && completeCount === contactsCount ? 'is-complete' : '';
+    const isActive = isIssueActive ? 'is-active' : '';
+    const issueLink = `/issue/${issue.slugOrID()}`;
 
     return (
       <li>
@@ -23,9 +27,7 @@ export class IssuesListItem extends React.Component<Props, State> {
           aria-controls="content"
           className={`issues-list__item ${isCompleted} ${isActive}`}
           to={issueLink}
-          onClick={() =>
-            selectIssueActionCreator(this.props.issue.id.toString())
-          }
+          onClick={() => selectIssueActionCreator(issue.id.toString())}
         >
           <span
             aria-live="polite"
@@ -36,7 +38,7 @@ export class IssuesListItem extends React.Component<Props, State> {
           <span
             className={`issues-list__item__title ${isCompleted} ${isActive}`}
           >
-            {this.props.issue.name}
+            {issue.name}
           </span>
           <span
             className={`issues-list__item__summary ${isCompleted} ${isActive}`}

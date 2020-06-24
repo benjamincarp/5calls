@@ -13,11 +13,13 @@ interface Props {
   currentIssue?: Issue;
   completedIssueIds: string[];
   getIssuesIfNeeded: () => void;
+  getContactsIfNeeded: (force: boolean) => void;
 }
 
 export class IssuesList extends React.Component<Props> {
   componentDidMount() {
     this.props.getIssuesIfNeeded();
+    this.props.getContactsIfNeeded(false);
   }
 
   listFooter = () => {

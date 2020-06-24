@@ -14,6 +14,7 @@ test('should show IssuesListItem elements', () => {
       issues={issues}
       completedIssueIds={[]}
       getIssuesIfNeeded={jest.fn()}
+      getContactsIfNeeded={jest.fn()}
     />
   );
 
@@ -29,6 +30,7 @@ test('should show no IssueListItem elements if there are no issues to show', () 
       issues={issues}
       completedIssueIds={[]}
       getIssuesIfNeeded={jest.fn()}
+      getContactsIfNeeded={jest.fn()}
     />
   );
 

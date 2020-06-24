@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Issue } from '../../common/models';
 import { IssuesList } from '../issues';
-import { getIssuesIfNeeded } from '../../redux/remoteData';
+import { getIssuesIfNeeded, getContactsIfNeeded } from '../../redux/remoteData';
 
 interface Props {
   readonly issues: Issue[];
@@ -16,6 +16,7 @@ const Sidebar: React.StatelessComponent<Props> = (props: Props) => {
       currentIssue={props.currentIssue}
       completedIssueIds={props.completedIssueIds}
       getIssuesIfNeeded={getIssuesIfNeeded}
+      getContactsIfNeeded={getContactsIfNeeded}
     />
   );
 };

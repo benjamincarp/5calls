@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Issue, Category, CategoryMap } from '../../common/models';
 import { IssuesListItem } from './index';
 import { RemoteDataState } from '../../redux/remoteData';
-import { userStatsContext, remoteStateContext } from '../../contexts';
+import { userStatsContext } from '../../contexts';
 
 interface Props {
   readonly remoteState: RemoteDataState;
@@ -101,6 +101,7 @@ export class MoreIssues extends React.Component<Props, State> {
   }
 
   render() {
+    const contacts = this.props.remoteState.contacts;
     return (
       <section className="call">
         <div className="call_complete">
@@ -109,46 +110,39 @@ export class MoreIssues extends React.Component<Props, State> {
           </h1>
           <userStatsContext.Consumer>
             {userStatsState => (
-              <remoteStateContext.Consumer>
-                {remoteState => (
-                  <>
-                    {this.state.issueCategoryMap ? (
-                      this.state.issueCategoryMap.map((cat, key) => (
-                        <div key={key}>
-                          <h2>{cat.category.name}</h2>
-                          <ul className="issues-list" role="navigation">
-                            {cat.issues.map(issue => (
-                              <IssuesListItem
-                                key={issue.id}
-                                issue={issue}
-                                isIssueActive={false}
-                                isIssueComplete={
-                                  issue.numberOfCompletedContacts(
-                                    remoteState.contacts,
-                                    userStatsState.all
-                                  ) > 0
-                                }
-                                contactsCount={issue.numberOfContacts(
-                                  remoteState.contacts
-                                )}
-                                completeCount={issue.numberOfCompletedContacts(
-                                  remoteState.contacts,
-                                  userStatsState.all
-                                )}
-                              />
-                            ))}
-                          </ul>
-                        </div>
-                      ))
-                    ) : (
-                      <span />
-                    )}
-                  </>
+              <>
+                {this.state.issueCategoryMap ? (
+                  this.state.issueCategoryMap.map((cat, key) => (
+                    <div key={key}>
+                      <h2>{cat.category.name}</h2>
+                      <ul className="issues-list" role="navigation">
+                        {cat.issues.map(issue => (
+                          <IssuesListItem
+                            key={issue.id}
+                            issue={issue}
+                            isIssueActive={false}
+                            isIssueComplete={
+                              issue.numberOfCompletedContacts(
+                                contacts,
+                                userStatsState.all
+                              ) > 0
+                            }
+                            contactsCount={issue.numberOfContacts(contacts)}
+                            completeCount={issue.numberOfCompletedContacts(
+                              contacts,
+                              userStatsState.all
+                            )}
+                          />
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <span />
                 )}
-              </remoteStateContext.Consumer>
+              </>
             )}
           </userStatsContext.Consumer>
-          )}
         </div>
       </section>
     );

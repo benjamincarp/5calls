@@ -5,13 +5,14 @@ import { Link } from 'react-router-dom';
 import { Issue, ContactList } from '../../common/models';
 import { IssuesListItem } from './index';
 
-import { userStatsContext, remoteStateContext } from '../../contexts';
+import { userStatsContext } from '../../contexts';
 import { UserStatsState } from '../../redux/userStats';
 
 interface Props {
   issues: Issue[];
   currentIssue?: Issue;
   completedIssueIds: string[];
+  contacts: ContactList;
   getIssuesIfNeeded: () => void;
   getContactsIfNeeded: (force: boolean) => void;
 }
@@ -32,13 +33,14 @@ export class IssuesList extends React.Component<Props> {
     );
   };
 
-  listItems = (userStatsState: UserStatsState, contacts: ContactList) => {
+  listItems = (userStatsState: UserStatsState) => {
+    const { contacts, issues } = this.props;
     let currentIssueId = this.props.currentIssue
       ? this.props.currentIssue.id
       : 0;
 
-    if (this.props.issues && this.props.issues.map) {
-      return this.props.issues.map(issue => (
+    if (issues && issues.map) {
+      return issues.map(issue => (
         <IssuesListItem
           key={issue.id}
           issue={issue}
@@ -64,14 +66,10 @@ export class IssuesList extends React.Component<Props> {
     return (
       <userStatsContext.Consumer>
         {userStatsState => (
-          <remoteStateContext.Consumer>
-            {remoteState => (
-              <ul className="issues-list" role="navigation">
-                {this.listItems(userStatsState, remoteState.contacts)}
-                {this.listFooter()}
-              </ul>
-            )}
-          </remoteStateContext.Consumer>
+          <ul className="issues-list" role="navigation">
+            {this.listItems(userStatsState)}
+            {this.listFooter()}
+          </ul>
         )}
       </userStatsContext.Consumer>
     );

@@ -36,7 +36,7 @@ export class IssuesListItem extends React.Component<Props, State> {
             {isCompleted ? (
               <span className="visually-hidden" />
             ) : (
-              getProgressCircle(isIssueActive, completeCount, contactsCount)
+              getProgressCircle(completeCount, contactsCount)
             )}
           </span>
           <span
@@ -56,26 +56,15 @@ export class IssuesListItem extends React.Component<Props, State> {
   }
 }
 
-function getProgressCircle(
-  isIssueActive: boolean,
-  completeCount: number,
-  contactsCount: number
-) {
+function getProgressCircle(completeCount: number, contactsCount: number) {
   const R = 18;
-  const C = 113; // 2 * Pi * R
+  const C = 2 * 3.14 * R;
   const dashLength = (C * completeCount) / contactsCount;
-  const width = 4;
-  const circleStyle1 = {
-    fill: 'transparent',
-    stroke: '#e5e5e5',
-    strokeWidth: `${width}`
-  };
-  const circleStyle2 = {
-    fill: 'transparent',
-    stroke: '#2ab371',
-    strokeWidth: `${width}`,
+
+  // leaving as much of the styling as possible in the .SCSS file but stroke dashes need to be inlined for % math
+  const circleStyleProgress = {
     strokeDasharray: `${dashLength} ${C - dashLength}`,
-    strokeDashoffset: `${C / 4}`
+    strokeDashoffset: `${C / 4}` // offetting by 1/4 circle makes the progress start at the top
   };
 
   return (
@@ -84,8 +73,14 @@ function getProgressCircle(
       xmlns="http://www.w3.org/2000/svg"
       style={{ overflow: 'visible' }}
     >
-      <circle cx={`${R}`} cy={`${R}`} r={`${R}`} style={circleStyle1} />
-      <circle cx={`${R}`} cy={`${R}`} r={`${R}`} style={circleStyle2} />
+      <circle cx={`${R}`} cy={`${R}`} r={`${R}`} />
+      <circle
+        cx={`${R}`}
+        cy={`${R}`}
+        r={`${R}`}
+        style={circleStyleProgress}
+        className="progress"
+      />
     </svg>
   );
 }

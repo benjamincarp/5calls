@@ -94,6 +94,16 @@
       padding: 0;
       color: $white;
 
+      & circle {
+        fill: transparent;
+        stroke-width: 4;
+        stroke: $gray-lesslight;
+
+        &.progress {
+          stroke: $green;
+        }
+      }
+
       &.is-complete {
         color: transparent;
         border: 3px solid $green;

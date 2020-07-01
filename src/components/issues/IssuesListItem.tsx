@@ -59,7 +59,8 @@ export class IssuesListItem extends React.Component<Props, State> {
 function getProgressCircle(completeCount: number, contactsCount: number) {
   const R = 18;
   const C = 2 * 3.14 * R;
-  const dashLength = (C * completeCount) / contactsCount;
+  const dashLength =
+    contactsCount === 0 ? 0 : (C * completeCount) / contactsCount;
 
   // leaving as much of the styling as possible in the .SCSS file but stroke dashes need to be inlined for % math
   const circleStyleProgress = {
